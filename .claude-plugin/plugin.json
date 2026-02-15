@@ -1,6 +1,6 @@
 {
   "name": "emasoft-universal-clipboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cross-platform clipboard operations for Claude Code agents. Native macOS/Windows/WSL support plus Linux scripts with Wayland, X11, and history tracking.",
   "author": {
     "name": "Emasoft",
