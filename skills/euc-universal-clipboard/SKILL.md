@@ -1,8 +1,8 @@
 ---
 name: euc-universal-clipboard
 description: >-
-  Cross-platform clipboard copy/paste for Claude Code agents.
-  Supports macOS, Windows, WSL2, Linux Wayland/X11 with 20-item FIFO history.
+  Cross-platform clipboard copy/paste. Use when copying or pasting text/files across platforms.
+  Trigger with clipboard, copy, paste requests. Supports macOS, Windows, WSL2, Linux Wayland/X11.
 version: 1.0.0
 license: MIT
 tags: [system, clipboard, wayland, pbcopy, pbpaste, clip.exe, copy, paste, insert, append, text]
@@ -166,6 +166,8 @@ Once you paste successfully from the clipboard, you must:
 
 
 ## Checklist
+
+Copy this checklist and track your progress for clipboard operations:
 
 - [ ] Detect the current platform (macOS, Windows, WSL, Linux)
 - [ ] Use the correct copy command for the platform
