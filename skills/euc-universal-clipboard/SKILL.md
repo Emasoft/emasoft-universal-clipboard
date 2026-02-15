@@ -1,11 +1,8 @@
 ---
 name: euc-universal-clipboard
 description: >-
-  Use when the user asks to copy or paste text, files, or data to/from the system clipboard.
-  Cross-platform clipboard copy and paste for Claude Code agents.
-  Supports macOS pbcopy/pbpaste, Windows clip/PowerShell Get-Clipboard,
-  WSL2, Linux Wayland wl-copy, X11 xclip, with 20-item FIFO history.
-  Trigger with phrases like "copy to clipboard", "paste from clipboard", "clipboard history".
+  Cross-platform clipboard copy/paste for Claude Code agents.
+  Supports macOS, Windows, WSL2, Linux Wayland/X11 with 20-item FIFO history.
 version: 1.0.0
 license: MIT
 tags: [system, clipboard, wayland, pbcopy, pbpaste, clip.exe, copy, paste, insert, append, text]
@@ -167,6 +164,14 @@ Once you paste successfully from the clipboard, you must:
 - Communicate to the user that what he specified was pasted from the system clipboard to the place he specified (on Linux, you must specify which clipboard)
 - Indicate to the user the file or the folder full path where the required element was pasted, and (in case) the line number of the source file where it was pasted/inserted.
 
+
+## Checklist
+
+- [ ] Detect the current platform (macOS, Windows, WSL, Linux)
+- [ ] Use the correct copy command for the platform
+- [ ] Use the correct paste command for the platform
+- [ ] Verify clipboard content after copy
+- [ ] Report what was copied and how to paste
 
 ## Resources
 
