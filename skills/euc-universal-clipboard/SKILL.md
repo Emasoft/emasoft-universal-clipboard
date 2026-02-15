@@ -1,15 +1,19 @@
 ---
 name: euc-universal-clipboard
 description: >-
+  Use when the user asks to copy or paste text, files, or data to/from the system clipboard.
   Cross-platform clipboard copy and paste for Claude Code agents.
   Supports macOS pbcopy/pbpaste, Windows clip/PowerShell Get-Clipboard,
   WSL2, Linux Wayland wl-copy, X11 xclip, with 20-item FIFO history.
+  Trigger with phrases like "copy to clipboard", "paste from clipboard", "clipboard history".
 version: 1.0.0
 license: MIT
 tags: [system, clipboard, wayland, pbcopy, pbpaste, clip.exe, copy, paste, insert, append, text]
 ---
 
 # Universal Clipboard Skill
+
+## Overview
 
 Robust cross-platform skill to copy and paste text and files to/from the system clipboard.
 The skill provides two scripts to create the CLI global commands on Linux: `xcp <data>` and `xps [--index N]` to manage system clipboard operations across diverse environments.
@@ -23,16 +27,27 @@ The skill provides two scripts to create the CLI global commands on Linux: `xcp 
 - Use when you need to paste something from the system clipboard
 - Use when you need to use copy/paste operations in bash scripts you are writing
 
-# For non Linux platforms
+## Prerequisites
 
-## To Copy
+- **macOS**: `pbcopy` and `pbpaste` are pre-installed.
+- **Windows**: `clip` is pre-installed; PowerShell `Get-Clipboard` cmdlet is required for paste.
+- **WSL2**: `clip.exe` for copy; PowerShell `Get-Clipboard` via `powershell.exe` for paste.
+- **Linux Wayland**: `wl-clipboard` package must be installed (`sudo apt install wl-clipboard` or equivalent).
+- **Linux X11**: `xclip` package must be installed (`sudo apt install xclip` or equivalent).
+- **Linux script installation**: The provided `copy.sh` and `paste.sh` scripts must be installed (see Scripts Installation below).
+
+## Instructions
+
+### For non Linux platforms
+
+### To Copy (non-Linux)
 To copy text to the clipboard, pipe data to the platform-specific command:
 
 - macOS: `echo "text" | pbcopy`
 - Windows: `echo "text" | clip`
 - WSL2: `echo "text" | clip.exe`
 
-## To Paste
+### To Paste (non-Linux)
 To paste text from the clipboard, use the platform-specific command:
 
 - macOS: `pbpaste`
@@ -41,21 +56,21 @@ To paste text from the clipboard, use the platform-specific command:
 
 Note: The Windows `clip` and `clip.exe` commands are write-only (they can only copy TO the clipboard). To read FROM the clipboard on Windows or WSL2, you must use PowerShell's `Get-Clipboard` cmdlet as shown above.
 
-# For Linux platforms
+### For Linux platforms
 On Linux you are required to install the provided 2 scripts.
 
-## To Copy
+### To Copy (Linux)
 To copy text to the clipboard, pipe data to the provided script command:
 
 - Linux: `echo "text" | xcp`
 
-## To Paste
+### To Paste (Linux)
 To paste text from the clipboard use the provided script command:
 
 - Linux: `xps` (reads live system clipboard; falls back to history if clipboard is empty)
 - Linux: `xps -i 1` (paste first item from history)
 
-# Provided scripts for Linux platforms
+### Provided scripts for Linux platforms
 The included scripts paths are:
 - To Copy: `<SKILL ROOT>/scripts/copy.sh`  (once installed, it will become `xcp`)
 - To Paste: `<SKILL ROOT>/scripts/paste.sh` (once installed, it will become `xps`)
@@ -66,14 +81,14 @@ Use `--help` to get detailed usage informations.
 2. Run `chmod +x copy.sh paste.sh`.
 3. Run `sudo ./copy.sh --install`.
 
-## Scripts Capabilities
+### Scripts Capabilities
 - **Cross-Engine Support**: Seamlessly switches between Wayland (`wl-clipboard`), X11 (`xclip`), and WSL (`clip.exe`).
 - **Health Monitoring**: Real-time diagnostic reporting for missing dependencies or permission issues.
 - **Persistence**: Maintains a 20-item FIFO history in `~/.universal_clipboard_history`.
 - **MIME Awareness**: Distinguishes between raw text and file/directory URI references.
 - **Live Clipboard Reading**: The paste script reads the live system clipboard by default, falling back to history when the clipboard is empty.
 
-## Scripts Commands
+### Scripts Commands
 
 ### `copy.sh` or `xcp` (if installed)
 The copy (or xcp) command copies data to the clipboard and history.
@@ -93,9 +108,7 @@ The paste (or xps) command retrieves data from the live system clipboard or the 
     - `--quiet`: Disables engine status messages.
     - `--clear`: Full wipe of history and system clipboard buffers.
 
-## Scripts Execution Guide
-
-### Scripts Usage Examples
+## Examples
 - `xcp "text"`: Copy text.
 - `xcp file.png`: Copy file reference.
 - `xcp example/`: Copy directory reference.
@@ -104,7 +117,7 @@ The paste (or xps) command retrieves data from the live system clipboard or the 
 - `xps --clear`: Wipe everything in the clipboard for privacy.
 - `xps --list`: Show all items in clipboard history.
 
-### Scripts Dependency Check
+### Dependency Check
 Before initiating a workflow, verify the environment:
 ```bash
 copy.sh --quiet "test" && echo "Ready"
@@ -114,7 +127,7 @@ or:
 xcp --quiet "test" && echo "Ready"
 ```
 
-### Scripts Contextual Pasting
+### Contextual Pasting
 To provide the user with their clipboard history (max 20 entries):
 ```bash
 paste.sh --list
@@ -124,35 +137,41 @@ or:
 xps --list
 ```
 
-### Scripts Automation Fallback
+### Automation Fallback
 In non-interactive sessions (pipes/redirects), `paste.sh` (or `xps`) will automatically read the live system clipboard first, falling back to the most recent history item if the clipboard is empty. No prompting occurs.
 
-### Scripts System Health and Troubleshooting
-The script includes an automatic diagnostic engine. If something isn't working, simply run `copy` without `--quiet` to see the health report.
+## Error Handling
 
-#### Scripts Common Issues:
+The script includes an automatic diagnostic engine. If something is not working, simply run `copy` without `--quiet` to see the health report.
+
+### Common Issues:
 1. **Missing Dependencies**: On Wayland, you need `wl-clipboard`. On X11, you need `xclip`.
 2. **Permission Denied**: If the history file isn't writable, the script will suggest the correct `chmod` command.
 3. **WSL Path**: Ensure `/mnt/c/Windows/System32` is in your PATH to allow `clip.exe` access.
 4. **Windows/WSL Paste**: The `clip` and `clip.exe` commands are write-only. Use `powershell.exe -command "Get-Clipboard"` to read the clipboard on Windows and WSL2.
 
-## Scripts Security Notes
+### Scripts Security Notes
 - Data is stored in plain text at `$HOME/.universal_clipboard_history`.
 - For sensitive operations, agents should recommend `xcp --clear` or `xps --clear` after the task is finished.
 - Always verify that the paste operation was executed correctly.
 
-# Completion
+## Output
 
-## Mandatory Output After the Copy to the Clipboard
+### Mandatory Output After the Copy to the Clipboard
 Once you copied successfully in the clipboard, you must:
 - Communicate to the user that what he specified was copied to the system clipboard (on Linux, you must specify which clipboard)
 - Suggest to the user the exact cli command to paste what was just copied
 
-## Mandatory Output After the Paste from the Clipboard
+### Mandatory Output After the Paste from the Clipboard
 Once you paste successfully from the clipboard, you must:
 - Communicate to the user that what he specified was pasted from the system clipboard to the place he specified (on Linux, you must specify which clipboard)
 - Indicate to the user the file or the folder full path where the required element was pasted, and (in case) the line number of the source file where it was pasted/inserted.
 
 
-## Compliance
-This skill follows the [AgentSkills.io](https://agentskills.io) specification for portable agent capabilities.
+## Resources
+
+- [AgentSkills.io specification](https://agentskills.io) - Portable agent capabilities specification this skill follows
+- [wl-clipboard](https://github.com/bugaevc/wl-clipboard) - Wayland clipboard utilities (Linux Wayland)
+- [xclip](https://github.com/astrand/xclip) - X11 clipboard command line interface (Linux X11)
+- Script source: `<SKILL ROOT>/scripts/copy.sh` - The copy (xcp) script
+- Script source: `<SKILL ROOT>/scripts/paste.sh` - The paste (xps) script
